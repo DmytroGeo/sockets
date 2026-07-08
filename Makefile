@@ -1,10 +1,17 @@
+COMP= cc -Wall -Wextra -Werror
+CLI=udp_client
+SRV=udp_server
+RM = rm -f
 
-all:
-	cc server.c -o server
-	cc client.c -o client
+all: $(CLI) $(SRV)
+
+$(SRV):
+	$(COMP) $(SRV).c -o $(SRV)
+
+$(CLI):
+	$(COMP) $(CLI).c -o $(CLI)
 
 clean:
-	rm -f client
-	rm -f server
+	$(RM) $(CLI) $(SRV)
 
 re: clean all
