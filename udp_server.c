@@ -40,7 +40,7 @@ int	main(void)
 	if (socket_fd < 0)
 		return(perror("socket creation error"), EXIT_FAILURE);
 
-    //printf("The server thinks the socket is %d\n", socket_fd);
+    // printf("The server thinks the socket is %d\n", socket_fd);
 	//after the above command, a socket exists but doesn not have an address yet (we want it to bind to 127.0.0.1:4242).
 	//This is where we need the 'bind()' function.
 	// looking at the man page for the bind function we see it's prototype is 
@@ -86,5 +86,41 @@ int	main(void)
 	// to test this we set a sleep() at the end of our programme and, while it's running
 	// in another terminal we scan for open oprts with ss (used to dump socket statistics).
 	// exact command is 'ss -lunp | grep 4242'
-	// sleep(30);
+
+	// using recvfrom we can receive messages:
+	ssize_t received;
+	ssize_t sent;
+	int max_input_len = 90;
+	char buff[100];
+	struct sockaddr_in sender_addr;
+	socklen_t sender_addr_size;
+	while (1)
+	{
+		received = recvfrom(socket_fd, buff, max_input_len, 0, (struct sockaddr *)(&sender_addr), &sender_addr_size);
+		// the struct sockaddr * is set to NULL meaning we don't record info about who sent the message in any struct
+		// second NULL because the struct has no size (since we have no struct)
+		if (received < 0)
+		{
+			perror("recvfrom");
+			exit(EXIT_FAILURE);
+		}
+		buff[received] = '\0';
+		printf("We received this message from the client: %s", buff);
+		// printf("The family of the sender is %d\n", sender_addr.sin_family);
+	
+		// char ip[16];
+		// inet_ntop(sender_addr.sin_family, &(sender_addr.sin_addr), ip, 16);
+		// printf("The ip of the sender is %s\n", ip);
+	
+		// uint16_t port_number = ntohs(sender_addr.sin_port);
+		// printf("The port of the sender is %u\n", port_number);
+
+		sent = sendto(socket_fd, buff, ft_strlen(buff), 0, (struct sockaddr *)(&sender_addr), sizeof(sender_addr));
+		if (sent < 0)
+		{
+			perror("sendto");
+			exit(EXIT_FAILURE);
+		}
+	}
+	close(socket_fd);
 }

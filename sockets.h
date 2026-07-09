@@ -8,4 +8,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+size_t ft_strlen(const char *str);
+
 #endif
