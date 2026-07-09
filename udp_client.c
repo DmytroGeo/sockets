@@ -21,8 +21,12 @@ int	main(void)
 	struct sockaddr_in addr;
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(4242);
-	inet_pton(AF_INET, "127.0.0.1", &(addr.sin_addr));
+	addr.sin_port = htons(7777);
+	if (inet_pton(AF_INET, "127.0.0.1", &(addr.sin_addr)) != 1)
+	{
+		perror("inet_pton");
+		exit(EXIT_FAILURE);
+	}
 
 	ssize_t sent;
 	ssize_t received;

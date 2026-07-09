@@ -93,12 +93,10 @@ int	main(void)
 	int max_input_len = 90;
 	char buff[100];
 	struct sockaddr_in sender_addr;
-	socklen_t sender_addr_size;
+	socklen_t sender_addr_size = sizeof(sender_addr);
 	while (1)
 	{
 		received = recvfrom(socket_fd, buff, max_input_len, 0, (struct sockaddr *)(&sender_addr), &sender_addr_size);
-		// the struct sockaddr * is set to NULL meaning we don't record info about who sent the message in any struct
-		// second NULL because the struct has no size (since we have no struct)
 		if (received < 0)
 		{
 			perror("recvfrom");
@@ -115,7 +113,7 @@ int	main(void)
 		// uint16_t port_number = ntohs(sender_addr.sin_port);
 		// printf("The port of the sender is %u\n", port_number);
 
-		sent = sendto(socket_fd, buff, ft_strlen(buff), 0, (struct sockaddr *)(&sender_addr), sizeof(sender_addr));
+		sent = sendto(socket_fd, buff, ft_strlen(buff), 0, (struct sockaddr *)(&sender_addr), sender_addr_size);
 		if (sent < 0)
 		{
 			perror("sendto");
